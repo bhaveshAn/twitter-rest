@@ -11,7 +11,7 @@ from django.conf import settings
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password):
         if not username:
-            raise ValueError('User must have a username')
+            raise ValueError("User must have a username")
 
         user = self.model(username=username, email=email)
         user.set_password(password)
@@ -19,8 +19,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, username, email, password):
-        user = self.create_user(username=username, email=email,
-                                password=password)
+        user = self.create_user(username=username, email=email, password=password)
         user.is_superuser = True
         user.is_admin = True
         user.save(using=self._db)
@@ -37,8 +36,8 @@ class CustomUser(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email',]
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email"]
 
     objects = UserManager()
 
@@ -51,7 +50,7 @@ class CustomUser(AbstractBaseUser):
 
     @property
     def following(self):
-        
+
         return self.profile.following
 
     @property
@@ -64,12 +63,15 @@ class CustomUser(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return self.is_superuser
 
+
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    following = models.ManyToManyField(CustomUser, related_name = "followers",blank = True)
+    following = models.ManyToManyField(CustomUser, related_name="followers", blank=True)
 
-    def follow(self,user):
-        if self.following.filter(id=user.id).exists():#If user already follows other, unfollow
+    def follow(self, user):
+        if self.following.filter(
+            id=user.id
+        ).exists():  # If user already follows other, unfollow
             self.following.remove(user)
         else:
             self.following.add(user)
@@ -77,18 +79,20 @@ class Profile(models.Model):
         self.save()
 
     def __str__(self):
-        return self.user            #When outputting in console, show user
+        return self.user  # When outputting in console, show user
 
 
-#Whenever user is created, give it a profile and a token
+# Whenever user is created, give it a profile and a token
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
+
 @receiver(post_save, sender=CustomUser)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):

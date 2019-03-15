@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Docs</title>
+</head>
+<body>
+    <h1> Basic APIs </h1>
+
+    <pre>
+        /new-tweet/                  # POST (Creates new tweet)
+        /tweets/                     # GET (Lists all the tweets)
+        /tweets/:id/                 # GET (Details about a tweet)
+        /new-user/                   # POST (Creates new user)
+        /user/                       # GET (Lists the users)
+        /user/:username/             # GET (Details about a user)
+        /user/:username/tweets/      # GET (Lists the user's tweets)
+        /tweets/:id/reply/           # POST (Creates replies for a tweet)
+        /tweets/:id/like/            # PUT (favourate a tweet)
+        /user/:username/follow/      # PUT (Follow a user)
+        /login/                      # POST (returns Token)
+    </pre>
+
+</body>
+</html>

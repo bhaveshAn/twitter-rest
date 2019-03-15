@@ -1,32 +1,28 @@
-from django.shortcuts import render
-
 # Create your views here.
-from user.models import CustomUser
-
-from user.serializers import UserSerializerCreate, UserSerializerOut
-
 from rest_framework import generics
 from rest_framework import permissions
-from rest_framework.authentication import TokenAuthentication
 
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from user.models import CustomUser
+from user.serializers import UserSerializerCreate, UserSerializerOut
 
-class UserList(generics.ListAPIView): #Generic class based view to list users
+
+class UserList(generics.ListAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializerOut
 
-class UserDetail(generics.RetrieveAPIView): #Generic class based view to show specific user
+
+class UserDetail(generics.RetrieveAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializerOut
-    lookup_field = 'username'               #Field can be looked up with using the username
+    lookup_field = "username"
 
 
-class UserCreate(APIView): #Class to create user
-
+class UserCreate(APIView):
     def post(self, request, format=None):
         serializer = UserSerializerCreate(data=request.data)
         if serializer.is_valid():
@@ -34,19 +30,20 @@ class UserCreate(APIView): #Class to create user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class UserFollow(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    def getUser(self,username):      #Fetch user from database
+    def getUser(self, username):
 
         try:
-            user = CustomUser.objects.get(username = username)
+            user = CustomUser.objects.get(username=username)
         except CustomUser.DoesNotExist:
             raise Http404
 
-        return user   #Return associated user
+        return user
 
-    def put(self,request,username,format=None):
+    def put(self, request, username, format=None):
 
         user = self.getUser(username)
         user.profile.follow(self.request.user)

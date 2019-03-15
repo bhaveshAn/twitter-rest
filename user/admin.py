@@ -7,21 +7,19 @@ from user.models import Profile
 
 
 class UserAdmin(BaseUserAdmin):
-    list_display = ('email', 'username', 'is_admin')
-    list_filter = ('is_admin', )
+    list_display = ("email", "username", "is_admin")
+    list_filter = ("is_admin",)
     fieldsets = (
-        (None, {
-            'fields': ('email', 'username', 'password', )
-        }),
-        ('Permissions', {
-            'fields': ('is_admin', )
-        }), )
+        (None, {"fields": ("email", "username", "password")}),
+        ("Permissions", {"fields": ("is_admin",)}),
+    )
 
     add_fieldsets = ()
-    search_fields = ('email', 'username' )
-    ordering = ('email', 'username')
+    search_fields = ("email", "username")
+    ordering = ("email", "username")
     filter_horizontal = ()
+
 
 admin.site.register(CustomUser, UserAdmin)
 admin.site.unregister(Group)
-admin.site.register(Profile) #Allow tweet to be editable on admin end
+admin.site.register(Profile)  # Allow tweet to be editable on admin end
